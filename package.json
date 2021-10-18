@@ -1,0 +1,17 @@
+{
+  "name": "lambda-environment",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "invoke-local": "sls invoke local -f commit-message-scheduler --logger",
+    "invoke-local-prod": "sls invoke local --stage prod -f  commit-message-scheduler --logger"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1009.0",
+    "axios": "^0.23.0",
+    "cheerio": "^1.0.0-rc.10",
+    "env-var": "^7.0.1",
+    "uuid": "^8.3.2"
+  }
+}

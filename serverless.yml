@@ -1,0 +1,31 @@
+service: lambda-environment
+
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, "qa"}
+  environment: ${file(./config/env.${self:provider.stage}.json)}
+  iamRoleStatements: ${file(./config/serverless/db.iam.role.yaml)}
+
+custom:
+  schedulerRate: rate(1 minute)
+  enabled: true
+  tableName: ${self:provider.environment.DbTableName}
+  dbWriteCapacityUnits: ${self:provider.environment.DbWriteCapacityUnits}
+  dbReadCapacityUnits: ${self:provider.environment.DbReadCapacityUnits}
+
+resources:
+  Resources: ${file(./config/serverless/resources/dynamo.hero.table.yaml)}
+
+functions:
+  commit-message-scheduler:
+    handler: handler.scheduler
+    events:
+      - scheduler:
+          rate: ${self:custom.schedulerRate}
+          name: schedule-commit-message-${self:provider.stage}
+          description: get commit message each minute
+          enabled: ${self:custom.enabled}
